@@ -1,6 +1,5 @@
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 local Workspace = game:GetService("Workspace")
@@ -10,6 +9,7 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
+-- Clean up GUI lama agar tidak tertumpuk
 for _, gui in pairs(PlayerGui:GetChildren()) do
 	if gui:IsA("ScreenGui") and (gui.Name:find("AntiAFK") or gui.Name:find("HexkyHub")) then
 		gui:Destroy()
@@ -24,6 +24,7 @@ if gethui then
 	end
 end
 
+-- Bypass AFK Kick Utama (Sistem Default Roblox)
 LocalPlayer.Idled:Connect(function()
 	VirtualUser:CaptureController()
 	VirtualUser:ClickButton2(Vector2.new(0,0))
@@ -31,6 +32,7 @@ end)
 
 local TargetParent = gethui and gethui() or PlayerGui
 
+-- Black Screen GUI
 local BlackScreenGui = Instance.new("ScreenGui")
 BlackScreenGui.Name = "AntiAFK_BlackScreen"
 BlackScreenGui.ResetOnSpawn = false
@@ -57,6 +59,7 @@ BlackText.TextSize = 18
 BlackText.Font = Enum.Font.GothamBold
 BlackText.Parent = BlackFrame
 
+-- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ANTI_AFK_HEXKY_HUB"
 ScreenGui.ResetOnSpawn = false
@@ -85,26 +88,11 @@ MainCorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
 UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(0, 170, 255)
 UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke.Parent = MainFrame
 
-local UIGradient = Instance.new("UIGradient")
-UIGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 230)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 90, 255))
-})
-UIGradient.Parent = UIStroke
-
-task.spawn(function()
-	local rot = 0
-	while MainFrame and MainFrame.Parent do
-		rot = (rot + 1.5) % 360
-		UIGradient.Rotation = rot
-		task.wait(0.02)
-	end
-end)
-
+-- Header UI
 local HeaderFrame = Instance.new("Frame")
 HeaderFrame.Size = UDim2.new(1, 0, 0, 42)
 HeaderFrame.BackgroundTransparency = 1
@@ -163,6 +151,7 @@ end
 addHoverAnimation(MinimizeBtn, Color3.fromRGB(20, 26, 38), Color3.fromRGB(0, 140, 220))
 addHoverAnimation(CloseBtn, Color3.fromRGB(28, 20, 25), Color3.fromRGB(200, 40, 50))
 
+-- Navigation Bar
 local TabBar = Instance.new("Frame")
 TabBar.Size = UDim2.new(1, -28, 0, 32)
 TabBar.Position = UDim2.new(0, 14, 0, 46)
@@ -209,6 +198,7 @@ for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
 	corner.Parent = btn
 end
 
+-- Pages Container
 local Container = Instance.new("Frame")
 Container.Size = UDim2.new(1, -28, 0, 260)
 Container.Position = UDim2.new(0, 14, 0, 88)
@@ -348,6 +338,7 @@ local function createToggle(row, defaultState, callback)
 	end)
 end
 
+-- ANTI AFK SYSTEM
 local isAntiAfkActive = false
 local afkMode = "Camera & Jump"
 local moveTask = nil
@@ -383,6 +374,7 @@ ModeSelectBtn.MouseButton1Click:Connect(function()
 end)
 
 local function startAntiAFK()
+	if moveTask then task.cancel(moveTask) end
 	moveTask = task.spawn(function()
 		while isAntiAfkActive do
 			local char = LocalPlayer.Character
@@ -390,27 +382,25 @@ local function startAntiAFK()
 			local hum = char and char:FindFirstChildOfClass("Humanoid")
 			local camera = Workspace.CurrentCamera
 
+			VirtualUser:CaptureController()
+			VirtualUser:Button2Down(Vector2.new(0,0), camera and camera.CFrame or CFrame.new())
+			task.wait(0.1)
+			VirtualUser:Button2Up(Vector2.new(0,0), camera and camera.CFrame or CFrame.new())
+
 			if afkMode == "Camera & Jump" then
-				if hrp then hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(10), 0) end
+				if hum then hum.Jump = true end
 				if camera then camera.CFrame = camera.CFrame * CFrame.Angles(0, math.rad(5), 0) end
-				task.wait(1.5)
-				if not isAntiAfkActive then break end
-				VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-				task.wait(0.1)
-				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-				task.wait(2)
+				task.wait(3)
 			elseif afkMode == "Spin Character" then
-				if hrp then hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(30), 0) end
-				task.wait(0.2)
+				if hrp then hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(45), 0) end
+				task.wait(0.5)
 			elseif afkMode == "Random Walk" then
-				if hum then
-					local dirs = {Vector3.new(1,0,0), Vector3.new(-1,0,0), Vector3.new(0,0,1), Vector3.new(0,0,-1)}
-					hum:Move(dirs[math.random(1, #dirs)], false)
+				if hum and hrp then
+					local randomOffset = Vector3.new(math.random(-10, 10), 0, math.random(-10, 10))
+					hum:MoveTo(hrp.Position + randomOffset)
 				end
-				task.wait(2)
+				task.wait(3)
 			elseif afkMode == "Idle Safe" then
-				VirtualUser:CaptureController()
-				VirtualUser:ClickButton2(Vector2.new(0,0))
 				task.wait(5)
 			end
 		end
@@ -426,6 +416,7 @@ createToggle(rowAfk, false, function(state)
 	end
 end)
 
+-- FLY SYSTEM
 local flying = false
 local flyKeybindEnabled = false
 local flySpeed = 50
@@ -563,6 +554,7 @@ createToggle(rowKeybindToggle, false, function(state)
 	flyKeybindEnabled = state
 end)
 
+-- SETTINGS
 local rowScale = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 4), "UI Scale")
 local rowText = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 48), "Text Size Mode")
 local rowResetPos = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 92), "Reset Frame Position")
@@ -640,6 +632,7 @@ ResetPosBtn.MouseButton1Click:Connect(function()
 	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 end)
 
+-- OPTIMIZATIONS
 createToggle(rowVfx, false, function(state)
 	for _, obj in pairs(Workspace:GetDescendants()) do
 		if obj:IsA("ParticleEmitter") or obj:IsA("Sparkles") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Trail") or obj:IsA("Beam") then
@@ -703,6 +696,7 @@ createToggle(rowBlack, false, function(state)
 	toggleBlackScreen()
 end)
 
+-- GLOBAL KEYBIND LISTENERS
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.P then
