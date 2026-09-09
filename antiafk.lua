@@ -9,28 +9,33 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- Clean up GUI lama agar tidak tertumpuk
-for _, gui in pairs(PlayerGui:GetChildren()) do
-	if gui:IsA("ScreenGui") and (gui.Name:find("AntiAFK") or gui.Name:find("HexkyHub")) then
-		gui:Destroy()
-	end
-end
-
-if gethui then
-	for _, gui in pairs(gethui():GetChildren()) do
-		if gui.Name:find("AntiAFK") or gui.Name:find("HexkyHub") then
-			gui:Destroy()
+-- Dedicated GUI Cleanup
+local function CleanupOldGUIs()
+	local names = {"ANTI_AFK_HEXKY_HUB", "AntiAFK_BlackScreen", "AntiAFK", "HexkyHub"}
+	local function check(parent)
+		if not parent then return end
+		for _, child in pairs(parent:GetChildren()) do
+			for _, name in pairs(names) do
+				if child.Name == name or child.Name:find(name) then
+					child:Destroy()
+				end
+			end
 		end
 	end
+	check(PlayerGui)
+	if gethui then check(gethui()) end
+	if game:GetService("CoreGui") then check(game:GetService("CoreGui")) end
 end
 
--- Bypass AFK Kick Utama (Sistem Default Roblox)
+CleanupOldGUIs()
+
+-- Bypass AFK Kick Roblox
 LocalPlayer.Idled:Connect(function()
 	VirtualUser:CaptureController()
 	VirtualUser:ClickButton2(Vector2.new(0,0))
 end)
 
-local TargetParent = gethui and gethui() or PlayerGui
+local TargetParent = gethui and gethui() or (game:GetService("CoreGui") or PlayerGui)
 
 -- Black Screen GUI
 local BlackScreenGui = Instance.new("ScreenGui")
@@ -59,11 +64,12 @@ BlackText.TextSize = 18
 BlackText.Font = Enum.Font.GothamBold
 BlackText.Parent = BlackFrame
 
--- Main GUI
+-- Main Screen GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ANTI_AFK_HEXKY_HUB"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.DisplayOrder = 1000
 ScreenGui.Parent = TargetParent
 
 local MainUIScale = Instance.new("UIScale")
@@ -77,9 +83,9 @@ MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(11, 13, 19)
 MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
+MainFrame.Active = false
 MainFrame.ClipsDescendants = true
+MainFrame.ZIndex = 1
 MainFrame.Parent = ScreenGui
 
 local MainCorner = Instance.new("UICorner")
@@ -92,11 +98,41 @@ UIStroke.Color = Color3.fromRGB(0, 170, 255)
 UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke.Parent = MainFrame
 
--- Header UI
+-- Header & Custom Smooth Dragging (Mengatasi Bug Draggable Roblox)
 local HeaderFrame = Instance.new("Frame")
 HeaderFrame.Size = UDim2.new(1, 0, 0, 42)
 HeaderFrame.BackgroundTransparency = 1
+HeaderFrame.ZIndex = 2
+HeaderFrame.Active = true
 HeaderFrame.Parent = MainFrame
+
+local dragging, dragInput, dragStart, startPos
+HeaderFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = MainFrame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+HeaderFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
 
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(0.65, 0, 1, 0)
@@ -107,6 +143,7 @@ TitleLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
 TitleLabel.TextSize = 13
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.ZIndex = 5
 TitleLabel.Parent = HeaderFrame
 
 local MinimizeBtn = Instance.new("TextButton")
@@ -117,7 +154,9 @@ MinimizeBtn.Text = "—"
 MinimizeBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
 MinimizeBtn.TextSize = 12
 MinimizeBtn.Font = Enum.Font.GothamBold
-MinimizeBtn.AutoButtonColor = false
+MinimizeBtn.AutoButtonColor = true
+MinimizeBtn.Active = true
+MinimizeBtn.ZIndex = 10
 MinimizeBtn.Parent = HeaderFrame
 
 local MinimizeCorner = Instance.new("UICorner")
@@ -132,30 +171,21 @@ CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 70, 80)
 CloseBtn.TextSize = 11
 CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.AutoButtonColor = false
+CloseBtn.AutoButtonColor = true
+CloseBtn.Active = true
+CloseBtn.ZIndex = 10
 CloseBtn.Parent = HeaderFrame
 
 local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(1, 0)
 CloseCorner.Parent = CloseBtn
 
-local function addHoverAnimation(btn, normalColor, hoverColor)
-	btn.MouseEnter:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = hoverColor}):Play()
-	end)
-	btn.MouseLeave:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = normalColor}):Play()
-	end)
-end
-
-addHoverAnimation(MinimizeBtn, Color3.fromRGB(20, 26, 38), Color3.fromRGB(0, 140, 220))
-addHoverAnimation(CloseBtn, Color3.fromRGB(28, 20, 25), Color3.fromRGB(200, 40, 50))
-
 -- Navigation Bar
 local TabBar = Instance.new("Frame")
 TabBar.Size = UDim2.new(1, -28, 0, 32)
 TabBar.Position = UDim2.new(0, 14, 0, 46)
 TabBar.BackgroundColor3 = Color3.fromRGB(16, 20, 29)
+TabBar.ZIndex = 2
 TabBar.Parent = MainFrame
 
 local TabBarCorner = Instance.new("UICorner")
@@ -170,6 +200,8 @@ TabAntiAfkBtn.Text = "Anti-AFK"
 TabAntiAfkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 TabAntiAfkBtn.TextSize = 11
 TabAntiAfkBtn.Font = Enum.Font.GothamBold
+TabAntiAfkBtn.Active = true
+TabAntiAfkBtn.ZIndex = 10
 TabAntiAfkBtn.Parent = TabBar
 
 local TabFlyBtn = Instance.new("TextButton")
@@ -180,6 +212,8 @@ TabFlyBtn.Text = "Fly"
 TabFlyBtn.TextColor3 = Color3.fromRGB(140, 150, 170)
 TabFlyBtn.TextSize = 11
 TabFlyBtn.Font = Enum.Font.GothamBold
+TabFlyBtn.Active = true
+TabFlyBtn.ZIndex = 10
 TabFlyBtn.Parent = TabBar
 
 local TabSettingsBtn = Instance.new("TextButton")
@@ -190,6 +224,8 @@ TabSettingsBtn.Text = "Settings"
 TabSettingsBtn.TextColor3 = Color3.fromRGB(140, 150, 170)
 TabSettingsBtn.TextSize = 11
 TabSettingsBtn.Font = Enum.Font.GothamBold
+TabSettingsBtn.Active = true
+TabSettingsBtn.ZIndex = 10
 TabSettingsBtn.Parent = TabBar
 
 for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
@@ -203,39 +239,39 @@ local Container = Instance.new("Frame")
 Container.Size = UDim2.new(1, -28, 0, 260)
 Container.Position = UDim2.new(0, 14, 0, 88)
 Container.BackgroundTransparency = 1
+Container.Active = false
+Container.ZIndex = 2
 Container.Parent = MainFrame
 
-local TabAntiAfkPage = Instance.new("ScrollingFrame")
-TabAntiAfkPage.Size = UDim2.new(1, 0, 1, 0)
-TabAntiAfkPage.BackgroundTransparency = 1
-TabAntiAfkPage.BorderSizePixel = 0
-TabAntiAfkPage.ScrollBarThickness = 2
+local function createPage()
+	local page = Instance.new("ScrollingFrame")
+	page.Size = UDim2.new(1, 0, 1, 0)
+	page.BackgroundTransparency = 1
+	page.BorderSizePixel = 0
+	page.ScrollBarThickness = 2
+	page.Active = false
+	page.ZIndex = 3
+	page.Parent = Container
+	return page
+end
+
+local TabAntiAfkPage = createPage()
 TabAntiAfkPage.CanvasSize = UDim2.new(0, 0, 0, 330)
 TabAntiAfkPage.Visible = true
-TabAntiAfkPage.Parent = Container
 
-local TabFlyPage = Instance.new("ScrollingFrame")
-TabFlyPage.Size = UDim2.new(1, 0, 1, 0)
-TabFlyPage.BackgroundTransparency = 1
-TabFlyPage.BorderSizePixel = 0
-TabFlyPage.ScrollBarThickness = 2
+local TabFlyPage = createPage()
 TabFlyPage.CanvasSize = UDim2.new(0, 0, 0, 240)
 TabFlyPage.Visible = false
-TabFlyPage.Parent = Container
 
-local TabSettingsPage = Instance.new("ScrollingFrame")
-TabSettingsPage.Size = UDim2.new(1, 0, 1, 0)
-TabSettingsPage.BackgroundTransparency = 1
-TabSettingsPage.BorderSizePixel = 0
-TabSettingsPage.ScrollBarThickness = 2
+local TabSettingsPage = createPage()
 TabSettingsPage.CanvasSize = UDim2.new(0, 0, 0, 240)
 TabSettingsPage.Visible = false
-TabSettingsPage.Parent = Container
 
 local FooterFrame = Instance.new("Frame")
 FooterFrame.Size = UDim2.new(1, 0, 0, 28)
 FooterFrame.Position = UDim2.new(0, 0, 1, -28)
 FooterFrame.BackgroundTransparency = 1
+FooterFrame.ZIndex = 2
 FooterFrame.Parent = MainFrame
 
 local CreditsLabel = Instance.new("TextLabel")
@@ -247,6 +283,7 @@ CreditsLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 CreditsLabel.TextSize = 10
 CreditsLabel.Font = Enum.Font.Gotham
 CreditsLabel.TextXAlignment = Enum.TextXAlignment.Left
+CreditsLabel.ZIndex = 3
 CreditsLabel.Parent = FooterFrame
 
 local function createRow(parent, pos, text)
@@ -254,6 +291,8 @@ local function createRow(parent, pos, text)
 	row.Size = UDim2.new(1, -6, 0, 38)
 	row.Position = pos
 	row.BackgroundColor3 = Color3.fromRGB(16, 20, 29)
+	row.Active = false
+	row.ZIndex = 4
 	row.Parent = parent
 	
 	local corner = Instance.new("UICorner")
@@ -269,6 +308,7 @@ local function createRow(parent, pos, text)
 	label.TextSize = 11
 	label.Font = Enum.Font.GothamMedium
 	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.ZIndex = 5
 	label.Parent = row
 	
 	return row
@@ -276,12 +316,15 @@ end
 
 local function switchTab(selectedBtn, selectedPage)
 	for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
-		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(140, 150, 170)}):Play()
+		btn.BackgroundTransparency = 1
+		btn.TextColor3 = Color3.fromRGB(140, 150, 170)
 	end
 	for _, page in pairs({TabAntiAfkPage, TabFlyPage, TabSettingsPage}) do
 		page.Visible = false
 	end
-	TweenService:Create(selectedBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0, BackgroundColor3 = Color3.fromRGB(0, 140, 230), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+	selectedBtn.BackgroundTransparency = 0
+	selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 230)
+	selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	selectedPage.Visible = true
 end
 
@@ -292,10 +335,8 @@ TabSettingsBtn.MouseButton1Click:Connect(function() switchTab(TabSettingsBtn, Ta
 local isMinimized = false
 MinimizeBtn.MouseButton1Click:Connect(function()
 	isMinimized = not isMinimized
-	local targetSize = isMinimized and UDim2.new(0, 380, 0, 42) or UDim2.new(0, 380, 0, 390)
+	MainFrame.Size = isMinimized and UDim2.new(0, 380, 0, 42) or UDim2.new(0, 380, 0, 390)
 	MinimizeBtn.Text = isMinimized and "□" or "—"
-	
-	TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDir.Out), {Size = targetSize}):Play()
 end)
 
 CloseBtn.MouseButton1Click:Connect(function()
@@ -308,7 +349,9 @@ local function createToggle(row, defaultState, callback)
 	btn.Position = UDim2.new(1, -50, 0.5, -10)
 	btn.BackgroundColor3 = defaultState and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
 	btn.Text = ""
-	btn.AutoButtonColor = false
+	btn.AutoButtonColor = true
+	btn.Active = true
+	btn.ZIndex = 10
 	btn.Parent = row
 	
 	local corner = Instance.new("UICorner")
@@ -319,6 +362,8 @@ local function createToggle(row, defaultState, callback)
 	dot.Size = UDim2.new(0, 14, 0, 14)
 	dot.Position = defaultState and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
 	dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	dot.Active = false
+	dot.ZIndex = 11
 	dot.Parent = btn
 	
 	local dotCorner = Instance.new("UICorner")
@@ -328,17 +373,13 @@ local function createToggle(row, defaultState, callback)
 	local state = defaultState
 	btn.MouseButton1Click:Connect(function()
 		state = not state
-		local targetColor = state and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
-		local targetPos = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
-		
-		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = targetColor}):Play()
-		TweenService:Create(dot, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {Position = targetPos}):Play()
-		
+		btn.BackgroundColor3 = state and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
+		dot.Position = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
 		callback(state)
 	end)
 end
 
--- ANTI AFK SYSTEM
+-- ANTI AFK LOGIC
 local isAntiAfkActive = false
 local afkMode = "Camera & Jump"
 local moveTask = nil
@@ -361,6 +402,8 @@ ModeSelectBtn.Text = afkMode
 ModeSelectBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
 ModeSelectBtn.TextSize = 10
 ModeSelectBtn.Font = Enum.Font.GothamBold
+ModeSelectBtn.Active = true
+ModeSelectBtn.ZIndex = 10
 ModeSelectBtn.Parent = rowMode
 
 local ModeCorner = Instance.new("UICorner")
@@ -383,9 +426,7 @@ local function startAntiAFK()
 			local camera = Workspace.CurrentCamera
 
 			VirtualUser:CaptureController()
-			VirtualUser:Button2Down(Vector2.new(0,0), camera and camera.CFrame or CFrame.new())
-			task.wait(0.1)
-			VirtualUser:Button2Up(Vector2.new(0,0), camera and camera.CFrame or CFrame.new())
+			VirtualUser:ClickButton2(Vector2.new(0,0))
 
 			if afkMode == "Camera & Jump" then
 				if hum then hum.Jump = true end
@@ -396,10 +437,10 @@ local function startAntiAFK()
 				task.wait(0.5)
 			elseif afkMode == "Random Walk" then
 				if hum and hrp then
-					local randomOffset = Vector3.new(math.random(-10, 10), 0, math.random(-10, 10))
+					local randomOffset = Vector3.new(math.random(-8, 8), 0, math.random(-8, 8))
 					hum:MoveTo(hrp.Position + randomOffset)
 				end
-				task.wait(3)
+				task.wait(2.5)
 			elseif afkMode == "Idle Safe" then
 				task.wait(5)
 			end
@@ -428,38 +469,27 @@ local rowFlySpeed = createRow(TabFlyPage, UDim2.new(0, 3, 0, 92), "Fly Speed: " 
 
 local SpeedLabel = rowFlySpeed:FindFirstChildOfClass("TextLabel")
 
-local MinusBtn = Instance.new("TextButton")
-MinusBtn.Size = UDim2.new(0, 24, 0, 22)
-MinusBtn.Position = UDim2.new(1, -84, 0.5, -11)
-MinusBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
-MinusBtn.Text = "-"
-MinusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinusBtn.Font = Enum.Font.GothamBold
-MinusBtn.Parent = rowFlySpeed
-
-local PlusBtn = Instance.new("TextButton")
-PlusBtn.Size = UDim2.new(0, 24, 0, 22)
-PlusBtn.Position = UDim2.new(1, -30, 0.5, -11)
-PlusBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
-PlusBtn.Text = "+"
-PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-PlusBtn.Font = Enum.Font.GothamBold
-PlusBtn.Parent = rowFlySpeed
-
-local ResetBtn = Instance.new("TextButton")
-ResetBtn.Size = UDim2.new(0, 24, 0, 22)
-ResetBtn.Position = UDim2.new(1, -57, 0.5, -11)
-ResetBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
-ResetBtn.Text = "R"
-ResetBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
-ResetBtn.Font = Enum.Font.GothamBold
-ResetBtn.Parent = rowFlySpeed
-
-for _, btn in pairs({MinusBtn, PlusBtn, ResetBtn}) do
+local function createFlyBtn(pos, text, col)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 24, 0, 22)
+	btn.Position = pos
+	btn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+	btn.Text = text
+	btn.TextColor3 = col
+	btn.Font = Enum.Font.GothamBold
+	btn.Active = true
+	btn.ZIndex = 10
+	btn.Parent = rowFlySpeed
+	
 	local c = Instance.new("UICorner")
 	c.CornerRadius = UDim.new(0, 4)
 	c.Parent = btn
+	return btn
 end
+
+local MinusBtn = createFlyBtn(UDim2.new(1, -84, 0.5, -11), "-", Color3.fromRGB(255, 255, 255))
+local ResetBtn = createFlyBtn(UDim2.new(1, -57, 0.5, -11), "R", Color3.fromRGB(0, 210, 255))
+local PlusBtn = createFlyBtn(UDim2.new(1, -30, 0.5, -11), "+", Color3.fromRGB(255, 255, 255))
 
 MinusBtn.MouseButton1Click:Connect(function()
 	flySpeed = math.max(10, flySpeed - 10)
@@ -570,6 +600,8 @@ ScaleBtn.Text = "1.0x"
 ScaleBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
 ScaleBtn.TextSize = 10
 ScaleBtn.Font = Enum.Font.GothamBold
+ScaleBtn.Active = true
+ScaleBtn.ZIndex = 10
 ScaleBtn.Parent = rowScale
 
 local ScaleCorner = Instance.new("UICorner")
@@ -594,6 +626,8 @@ TextBtn.Text = "Normal"
 TextBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
 TextBtn.TextSize = 10
 TextBtn.Font = Enum.Font.GothamBold
+TextBtn.Active = true
+TextBtn.ZIndex = 10
 TextBtn.Parent = rowText
 
 local TextCorner = Instance.new("UICorner")
@@ -622,6 +656,8 @@ ResetPosBtn.Text = "Reset"
 ResetPosBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 ResetPosBtn.TextSize = 10
 ResetPosBtn.Font = Enum.Font.GothamBold
+ResetPosBtn.Active = true
+ResetPosBtn.ZIndex = 10
 ResetPosBtn.Parent = rowResetPos
 
 local ResetCorner = Instance.new("UICorner")
@@ -696,7 +732,7 @@ createToggle(rowBlack, false, function(state)
 	toggleBlackScreen()
 end)
 
--- GLOBAL KEYBIND LISTENERS
+-- GLOBAL KEYBINDS
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.P then
