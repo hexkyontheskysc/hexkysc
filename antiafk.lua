@@ -43,7 +43,7 @@ BlackScreenGui.Parent = TargetParent
 local BlackFrame = Instance.new("Frame")
 BlackFrame.Size = UDim2.new(1, 0, 1, 0)
 BlackFrame.Position = UDim2.new(0, 0, 0, 0)
-BlackFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 5)
+BlackFrame.BackgroundColor3 = Color3.fromRGB(3, 4, 8)
 BlackFrame.BorderSizePixel = 0
 BlackFrame.Parent = BlackScreenGui
 
@@ -51,10 +51,10 @@ local BlackText = Instance.new("TextLabel")
 BlackText.Size = UDim2.new(1, 0, 0, 100)
 BlackText.Position = UDim2.new(0, 0, 0.5, -50)
 BlackText.BackgroundTransparency = 1
-BlackText.Text = "MODE HEMAT DAYA (BLACK SCREEN)\nTekan 'B' untuk Kembali Ke Normal"
-BlackText.TextColor3 = Color3.fromRGB(0, 220, 255)
-BlackText.TextSize = 20
-BlackText.Font = Enum.Font.SourceSansBold
+BlackText.Text = "SYSTEM SLEEP (BLACK SCREEN)\nTekan 'B' untuk membangunkan layar"
+BlackText.TextColor3 = Color3.fromRGB(0, 230, 255)
+BlackText.TextSize = 18
+BlackText.Font = Enum.Font.GothamBold
 BlackText.Parent = BlackFrame
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -69,134 +69,135 @@ MainUIScale.Parent = ScreenGui
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 360, 0, 380)
-MainFrame.Position = UDim2.new(0.5, -180, 0.25, -190)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+MainFrame.Size = UDim2.new(0, 380, 0, 390)
+MainFrame.Position = UDim2.new(0.5, -190, 0.25, -195)
+MainFrame.BackgroundColor3 = Color3.fromRGB(11, 13, 19)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
 local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 8)
+MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Thickness = 2.5
+UIStroke.Thickness = 2
 UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke.Parent = MainFrame
 
 local UIGradient = Instance.new("UIGradient")
 UIGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 200)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 100, 255))
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 230)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 90, 255))
 })
 UIGradient.Parent = UIStroke
 
 task.spawn(function()
-	local rotation = 0
+	local rot = 0
 	while MainFrame and MainFrame.Parent do
-		rotation = (rotation + 2) % 360
-		UIGradient.Rotation = rotation
-		task.wait(0.03)
+		rot = (rot + 1.5) % 360
+		UIGradient.Rotation = rot
+		task.wait(0.02)
 	end
 end)
 
 local HeaderFrame = Instance.new("Frame")
-HeaderFrame.Size = UDim2.new(1, 0, 0, 36)
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
-HeaderFrame.BorderSizePixel = 0
+HeaderFrame.Size = UDim2.new(1, 0, 0, 42)
+HeaderFrame.BackgroundTransparency = 1
 HeaderFrame.Parent = MainFrame
-
-local HeaderCorner = Instance.new("UICorner")
-HeaderCorner.CornerRadius = UDim.new(0, 8)
-HeaderCorner.Parent = HeaderFrame
 
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(0.65, 0, 1, 0)
-TitleLabel.Position = UDim2.new(0, 12, 0, 0)
+TitleLabel.Position = UDim2.new(0, 16, 0, 0)
 TitleLabel.BackgroundTransparency = 1
 TitleLabel.Text = "ANTI AFK - HEXKY HUB"
-TitleLabel.TextColor3 = Color3.fromRGB(0, 210, 255)
-TitleLabel.TextSize = 14
+TitleLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
+TitleLabel.TextSize = 13
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.Parent = HeaderFrame
 
 local ExpandBtn = Instance.new("TextButton")
-ExpandBtn.Size = UDim2.new(0, 28, 0, 24)
-ExpandBtn.Position = UDim2.new(1, -64, 0, 6)
-ExpandBtn.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
-ExpandBtn.Text = "[+]"
-ExpandBtn.TextColor3 = Color3.fromRGB(0, 230, 255)
-ExpandBtn.TextSize = 12
-ExpandBtn.Font = Enum.Font.SourceSansBold
+ExpandBtn.Size = UDim2.new(0, 24, 0, 24)
+ExpandBtn.Position = UDim2.new(1, -62, 0, 9)
+ExpandBtn.BackgroundColor3 = Color3.fromRGB(20, 26, 38)
+ExpandBtn.Text = "⤢"
+ExpandBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+ExpandBtn.TextSize = 14
+ExpandBtn.Font = Enum.Font.GothamBold
+ExpandBtn.AutoButtonColor = false
 ExpandBtn.Parent = HeaderFrame
 
 local ExpandCorner = Instance.new("UICorner")
-ExpandCorner.CornerRadius = UDim.new(0, 4)
+ExpandCorner.CornerRadius = UDim.new(1, 0)
 ExpandCorner.Parent = ExpandBtn
 
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 28, 0, 24)
-CloseBtn.Position = UDim2.new(1, -32, 0, 6)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
-CloseBtn.Text = "X"
-CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextSize = 13
-CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+CloseBtn.Position = UDim2.new(1, -32, 0, 9)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(25, 20, 28)
+CloseBtn.Text = "✕"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 70, 80)
+CloseBtn.TextSize = 12
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.AutoButtonColor = false
 CloseBtn.Parent = HeaderFrame
 
 local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 4)
+CloseCorner.CornerRadius = UDim.new(1, 0)
 CloseCorner.Parent = CloseBtn
 
 local TabBar = Instance.new("Frame")
-TabBar.Size = UDim2.new(1, -20, 0, 30)
-TabBar.Position = UDim2.new(0, 10, 0, 42)
-TabBar.BackgroundTransparency = 1
+TabBar.Size = UDim2.new(1, -28, 0, 32)
+TabBar.Position = UDim2.new(0, 14, 0, 46)
+TabBar.BackgroundColor3 = Color3.fromRGB(16, 20, 29)
 TabBar.Parent = MainFrame
 
+local TabBarCorner = Instance.new("UICorner")
+TabBarCorner.CornerRadius = UDim.new(0, 8)
+TabBarCorner.Parent = TabBar
+
 local TabAntiAfkBtn = Instance.new("TextButton")
-TabAntiAfkBtn.Size = UDim2.new(0.32, 0, 1, 0)
-TabAntiAfkBtn.Position = UDim2.new(0, 0, 0, 0)
-TabAntiAfkBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 220)
+TabAntiAfkBtn.Size = UDim2.new(0.33, -2, 1, -4)
+TabAntiAfkBtn.Position = UDim2.new(0, 2, 0, 2)
+TabAntiAfkBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 230)
 TabAntiAfkBtn.Text = "Anti-AFK"
 TabAntiAfkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-TabAntiAfkBtn.TextSize = 12
-TabAntiAfkBtn.Font = Enum.Font.SourceSansBold
+TabAntiAfkBtn.TextSize = 11
+TabAntiAfkBtn.Font = Enum.Font.GothamBold
 TabAntiAfkBtn.Parent = TabBar
 
 local TabFlyBtn = Instance.new("TextButton")
-TabFlyBtn.Size = UDim2.new(0.32, 0, 1, 0)
-TabFlyBtn.Position = UDim2.new(0.34, 0, 0, 0)
-TabFlyBtn.BackgroundColor3 = Color3.fromRGB(30, 38, 52)
-TabFlyBtn.Text = "Fly Mode"
-TabFlyBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-TabFlyBtn.TextSize = 12
-TabFlyBtn.Font = Enum.Font.SourceSansBold
+TabFlyBtn.Size = UDim2.new(0.33, -2, 1, -4)
+TabFlyBtn.Position = UDim2.new(0.33, 2, 0, 2)
+TabFlyBtn.BackgroundTransparency = 1
+TabFlyBtn.Text = "Fly"
+TabFlyBtn.TextColor3 = Color3.fromRGB(140, 150, 170)
+TabFlyBtn.TextSize = 11
+TabFlyBtn.Font = Enum.Font.GothamBold
 TabFlyBtn.Parent = TabBar
 
 local TabSettingsBtn = Instance.new("TextButton")
-TabSettingsBtn.Size = UDim2.new(0.32, 0, 1, 0)
-TabSettingsBtn.Position = UDim2.new(0.68, 0, 0, 0)
-TabSettingsBtn.BackgroundColor3 = Color3.fromRGB(30, 38, 52)
+TabSettingsBtn.Size = UDim2.new(0.33, -2, 1, -4)
+TabSettingsBtn.Position = UDim2.new(0.66, 2, 0, 2)
+TabSettingsBtn.BackgroundTransparency = 1
 TabSettingsBtn.Text = "Settings"
-TabSettingsBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-TabSettingsBtn.TextSize = 12
-TabSettingsBtn.Font = Enum.Font.SourceSansBold
+TabSettingsBtn.TextColor3 = Color3.fromRGB(140, 150, 170)
+TabSettingsBtn.TextSize = 11
+TabSettingsBtn.Font = Enum.Font.GothamBold
 TabSettingsBtn.Parent = TabBar
 
 for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 5)
+	corner.CornerRadius = UDim.new(0, 6)
 	corner.Parent = btn
 end
 
 local Container = Instance.new("Frame")
-Container.Size = UDim2.new(1, -20, 0, 265)
-Container.Position = UDim2.new(0, 10, 0, 78)
+Container.Size = UDim2.new(1, -28, 0, 260)
+Container.Position = UDim2.new(0, 14, 0, 88)
 Container.BackgroundTransparency = 1
 Container.Parent = MainFrame
 
@@ -204,8 +205,8 @@ local TabAntiAfkPage = Instance.new("ScrollingFrame")
 TabAntiAfkPage.Size = UDim2.new(1, 0, 1, 0)
 TabAntiAfkPage.BackgroundTransparency = 1
 TabAntiAfkPage.BorderSizePixel = 0
-TabAntiAfkPage.ScrollBarThickness = 4
-TabAntiAfkPage.CanvasSize = UDim2.new(0, 0, 0, 340)
+TabAntiAfkPage.ScrollBarThickness = 2
+TabAntiAfkPage.CanvasSize = UDim2.new(0, 0, 0, 330)
 TabAntiAfkPage.Visible = true
 TabAntiAfkPage.Parent = Container
 
@@ -213,8 +214,8 @@ local TabFlyPage = Instance.new("ScrollingFrame")
 TabFlyPage.Size = UDim2.new(1, 0, 1, 0)
 TabFlyPage.BackgroundTransparency = 1
 TabFlyPage.BorderSizePixel = 0
-TabFlyPage.ScrollBarThickness = 4
-TabFlyPage.CanvasSize = UDim2.new(0, 0, 0, 260)
+TabFlyPage.ScrollBarThickness = 2
+TabFlyPage.CanvasSize = UDim2.new(0, 0, 0, 240)
 TabFlyPage.Visible = false
 TabFlyPage.Parent = Container
 
@@ -222,59 +223,63 @@ local TabSettingsPage = Instance.new("ScrollingFrame")
 TabSettingsPage.Size = UDim2.new(1, 0, 1, 0)
 TabSettingsPage.BackgroundTransparency = 1
 TabSettingsPage.BorderSizePixel = 0
-TabSettingsPage.ScrollBarThickness = 4
-TabSettingsPage.CanvasSize = UDim2.new(0, 0, 0, 260)
+TabSettingsPage.ScrollBarThickness = 2
+TabSettingsPage.CanvasSize = UDim2.new(0, 0, 0, 240)
 TabSettingsPage.Visible = false
 TabSettingsPage.Parent = Container
 
 local FooterFrame = Instance.new("Frame")
-FooterFrame.Size = UDim2.new(1, 0, 0, 24)
-FooterFrame.Position = UDim2.new(0, 0, 1, -24)
-FooterFrame.BackgroundColor3 = Color3.fromRGB(10, 12, 18)
-FooterFrame.BorderSizePixel = 0
+FooterFrame.Size = UDim2.new(1, 0, 0, 28)
+FooterFrame.Position = UDim2.new(0, 0, 1, -28)
+FooterFrame.BackgroundTransparency = 1
 FooterFrame.Parent = MainFrame
 
-local FooterCorner = Instance.new("UICorner")
-FooterCorner.CornerRadius = UDim.new(0, 8)
-FooterCorner.Parent = FooterFrame
-
 local CreditsLabel = Instance.new("TextLabel")
-CreditsLabel.Size = UDim2.new(1, -20, 1, 0)
-CreditsLabel.Position = UDim2.new(0, 10, 0, 0)
+CreditsLabel.Size = UDim2.new(1, -28, 1, 0)
+CreditsLabel.Position = UDim2.new(0, 14, 0, 0)
 CreditsLabel.BackgroundTransparency = 1
-CreditsLabel.Text = "Credits: Created by Hexky | Keybinds [P: Menu | B: BlackScreen | E: Fly]"
+CreditsLabel.Text = "Credits: Created by Hexky  •  [P: Menu | B: Screen | E: Fly]"
 CreditsLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 CreditsLabel.TextSize = 10
-CreditsLabel.Font = Enum.Font.SourceSans
+CreditsLabel.Font = Enum.Font.Gotham
 CreditsLabel.TextXAlignment = Enum.TextXAlignment.Left
 CreditsLabel.Parent = FooterFrame
 
-local function createStyledBtn(parent, size, pos, text, bg)
-	local btn = Instance.new("TextButton")
-	btn.Size = size
-	btn.Position = pos
-	btn.BackgroundColor3 = bg or Color3.fromRGB(30, 38, 52)
-	btn.Text = text
-	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	btn.TextSize = 12
-	btn.Font = Enum.Font.SourceSansBold
-	btn.Parent = parent
+local function createRow(parent, pos, text)
+	local row = Instance.new("Frame")
+	row.Size = UDim2.new(1, -6, 0, 38)
+	row.Position = pos
+	row.BackgroundColor3 = Color3.fromRGB(16, 20, 29)
+	row.Parent = parent
 	
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 6)
-	corner.Parent = btn
-	return btn
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = row
+	
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(0.6, 0, 1, 0)
+	label.Position = UDim2.new(0, 12, 0, 0)
+	label.BackgroundTransparency = 1
+	label.Text = text
+	label.TextColor3 = Color3.fromRGB(220, 225, 235)
+	label.TextSize = 11
+	label.Font = Enum.Font.GothamMedium
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = row
+	
+	return row
 end
 
 local function switchTab(selectedBtn, selectedPage)
 	for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
-		btn.BackgroundColor3 = Color3.fromRGB(30, 38, 52)
-		btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+		btn.BackgroundTransparency = 1
+		btn.TextColor3 = Color3.fromRGB(140, 150, 170)
 	end
 	for _, page in pairs({TabAntiAfkPage, TabFlyPage, TabSettingsPage}) do
 		page.Visible = false
 	end
-	selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 220)
+	selectedBtn.BackgroundTransparency = 0
+	selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 230)
 	selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	selectedPage.Visible = true
 end
@@ -288,12 +293,12 @@ ExpandBtn.MouseButton1Click:Connect(function()
 	isExpanded = not isExpanded
 	if isExpanded then
 		MainFrame.Size = UDim2.new(0, 480, 0, 440)
-		Container.Size = UDim2.new(1, -20, 0, 325)
-		ExpandBtn.Text = "[-]"
+		Container.Size = UDim2.new(1, -28, 0, 310)
+		ExpandBtn.Text = "↙"
 	else
-		MainFrame.Size = UDim2.new(0, 360, 0, 380)
-		Container.Size = UDim2.new(1, -20, 0, 265)
-		ExpandBtn.Text = "[+]"
+		MainFrame.Size = UDim2.new(0, 380, 0, 390)
+		Container.Size = UDim2.new(1, -28, 0, 260)
+		ExpandBtn.Text = "⤢"
 	end
 end)
 
@@ -302,24 +307,70 @@ CloseBtn.MouseButton1Click:Connect(function()
 	BlackScreenGui:Destroy()
 end)
 
+local function createToggle(row, defaultState, callback)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 42, 0, 20)
+	btn.Position = UDim2.new(1, -50, 0.5, -10)
+	btn.BackgroundColor3 = defaultState and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
+	btn.Text = ""
+	btn.AutoButtonColor = false
+	btn.Parent = row
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = btn
+	
+	local dot = Instance.new("Frame")
+	dot.Size = UDim2.new(0, 14, 0, 14)
+	dot.Position = defaultState and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
+	dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	dot.Parent = btn
+	
+	local dotCorner = Instance.new("UICorner")
+	dotCorner.CornerRadius = UDim.new(1, 0)
+	dotCorner.Parent = dot
+	
+	local state = defaultState
+	btn.MouseButton1Click:Connect(function()
+		state = not state
+		btn.BackgroundColor3 = state and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
+		dot.Position = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
+		callback(state)
+	end)
+end
+
 local isAntiAfkActive = false
 local afkMode = "Camera & Jump"
 local moveTask = nil
 
-local ToggleAfkBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 34), UDim2.new(0, 5, 0, 5), "ANTI-AFK: OFF", Color3.fromRGB(180, 40, 50))
-local AfkModeBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 32), UDim2.new(0, 5, 0, 45), "MODE: Camera & Jump", Color3.fromRGB(35, 45, 65))
-local VfxBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 32), UDim2.new(0, 5, 0, 83), "VFX / EFEK: ON (NORMAL)", Color3.fromRGB(180, 40, 50))
-local FpsBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 32), UDim2.new(0, 5, 0, 121), "BOOST FPS & LOW RENDER", Color3.fromRGB(50, 55, 70))
-local HidePlayersBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 32), UDim2.new(0, 5, 0, 159), "HIDE PLAYERS: OFF", Color3.fromRGB(180, 40, 50))
-local BlackBtn = createStyledBtn(TabAntiAfkPage, UDim2.new(1, -10, 0, 32), UDim2.new(0, 5, 0, 197), "BLACK SCREEN (HEMAT DAYA) [B]", Color3.fromRGB(20, 80, 60))
+local rowAfk = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 4), "Anti-AFK System")
+local rowMode = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 48), "AFK Movement Mode")
+local rowVfx = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 92), "Disable World VFX")
+local rowFps = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 136), "FPS Booster & Low Render")
+local rowHide = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 180), "Hide Other Players")
+local rowBlack = createRow(TabAntiAfkPage, UDim2.new(0, 3, 0, 224), "Black Screen Mode [B]")
 
 local modesList = {"Camera & Jump", "Spin Character", "Random Walk", "Idle Safe"}
 local currentModeIdx = 1
 
-AfkModeBtn.MouseButton1Click:Connect(function()
+local ModeSelectBtn = Instance.new("TextButton")
+ModeSelectBtn.Size = UDim2.new(0, 110, 0, 22)
+ModeSelectBtn.Position = UDim2.new(1, -118, 0.5, -11)
+ModeSelectBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+ModeSelectBtn.Text = afkMode
+ModeSelectBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+ModeSelectBtn.TextSize = 10
+ModeSelectBtn.Font = Enum.Font.GothamBold
+ModeSelectBtn.Parent = rowMode
+
+local ModeCorner = Instance.new("UICorner")
+ModeCorner.CornerRadius = UDim.new(0, 6)
+ModeCorner.Parent = ModeSelectBtn
+
+ModeSelectBtn.MouseButton1Click:Connect(function()
 	currentModeIdx = (currentModeIdx % #modesList) + 1
 	afkMode = modesList[currentModeIdx]
-	AfkModeBtn.Text = "MODE: " .. afkMode
+	ModeSelectBtn.Text = afkMode
 end)
 
 local function startAntiAFK()
@@ -357,15 +408,11 @@ local function startAntiAFK()
 	end)
 end
 
-ToggleAfkBtn.MouseButton1Click:Connect(function()
-	isAntiAfkActive = not isAntiAfkActive
+createToggle(rowAfk, false, function(state)
+	isAntiAfkActive = state
 	if isAntiAfkActive then
-		ToggleAfkBtn.Text = "ANTI-AFK: ON"
-		ToggleAfkBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
 		startAntiAFK()
 	else
-		ToggleAfkBtn.Text = "ANTI-AFK: OFF"
-		ToggleAfkBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
 		if moveTask then task.cancel(moveTask) end
 	end
 end)
@@ -374,46 +421,57 @@ local flying = false
 local flySpeed = 50
 local flyConnection = nil
 
-local FlyToggleBtn = createStyledBtn(TabFlyPage, UDim2.new(1, -10, 0, 36), UDim2.new(0, 5, 0, 5), "FLY: OFF [E]", Color3.fromRGB(180, 40, 50))
+local rowFlyToggle = createRow(TabFlyPage, UDim2.new(0, 3, 0, 4), "Fly Hack [E]")
+local rowFlySpeed = createRow(TabFlyPage, UDim2.new(0, 3, 0, 48), "Fly Speed: " .. flySpeed)
 
-local SpeedFrame = Instance.new("Frame")
-SpeedFrame.Size = UDim2.new(1, -10, 0, 40)
-SpeedFrame.Position = UDim2.new(0, 5, 0, 48)
-SpeedFrame.BackgroundColor3 = Color3.fromRGB(25, 32, 45)
-SpeedFrame.Parent = TabFlyPage
+local SpeedLabel = rowFlySpeed:FindFirstChildOfClass("TextLabel")
 
-local SpeedCorner = Instance.new("UICorner")
-SpeedCorner.CornerRadius = UDim.new(0, 6)
-SpeedCorner.Parent = SpeedFrame
+local MinusBtn = Instance.new("TextButton")
+MinusBtn.Size = UDim2.new(0, 24, 0, 22)
+MinusBtn.Position = UDim2.new(1, -84, 0.5, -11)
+MinusBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+MinusBtn.Text = "-"
+MinusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinusBtn.Font = Enum.Font.GothamBold
+MinusBtn.Parent = rowFlySpeed
 
-local SpeedLabel = Instance.new("TextLabel")
-SpeedLabel.Size = UDim2.new(0.45, 0, 1, 0)
-SpeedLabel.Position = UDim2.new(0, 8, 0, 0)
-SpeedLabel.BackgroundTransparency = 1
-SpeedLabel.Text = "Kecepatan Fly: 50"
-SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpeedLabel.TextSize = 12
-SpeedLabel.Font = Enum.Font.SourceSansBold
-SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
-SpeedLabel.Parent = SpeedFrame
+local PlusBtn = Instance.new("TextButton")
+PlusBtn.Size = UDim2.new(0, 24, 0, 22)
+PlusBtn.Position = UDim2.new(1, -30, 0.5, -11)
+PlusBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+PlusBtn.Text = "+"
+PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlusBtn.Font = Enum.Font.GothamBold
+PlusBtn.Parent = rowFlySpeed
 
-local SpeedMinus = createStyledBtn(SpeedFrame, UDim2.new(0, 32, 0, 28), UDim2.new(1, -108, 0, 6), "-", Color3.fromRGB(40, 50, 70))
-local SpeedReset = createStyledBtn(SpeedFrame, UDim2.new(0, 32, 0, 28), UDim2.new(1, -72, 0, 6), "R", Color3.fromRGB(40, 50, 70))
-local SpeedPlus = createStyledBtn(SpeedFrame, UDim2.new(0, 32, 0, 28), UDim2.new(1, -36, 0, 6), "+", Color3.fromRGB(40, 50, 70))
+local ResetBtn = Instance.new("TextButton")
+ResetBtn.Size = UDim2.new(0, 24, 0, 22)
+ResetBtn.Position = UDim2.new(1, -57, 0.5, -11)
+ResetBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+ResetBtn.Text = "R"
+ResetBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+ResetBtn.Font = Enum.Font.GothamBold
+ResetBtn.Parent = rowFlySpeed
 
-SpeedMinus.MouseButton1Click:Connect(function()
+for _, btn in pairs({MinusBtn, PlusBtn, ResetBtn}) do
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(0, 4)
+	c.Parent = btn
+end
+
+MinusBtn.MouseButton1Click:Connect(function()
 	flySpeed = math.max(10, flySpeed - 10)
-	SpeedLabel.Text = "Kecepatan Fly: " .. tostring(flySpeed)
+	SpeedLabel.Text = "Fly Speed: " .. flySpeed
 end)
 
-SpeedPlus.MouseButton1Click:Connect(function()
+PlusBtn.MouseButton1Click:Connect(function()
 	flySpeed = math.min(300, flySpeed + 10)
-	SpeedLabel.Text = "Kecepatan Fly: " .. tostring(flySpeed)
+	SpeedLabel.Text = "Fly Speed: " .. flySpeed
 end)
 
-SpeedReset.MouseButton1Click:Connect(function()
+ResetBtn.MouseButton1Click:Connect(function()
 	flySpeed = 50
-	SpeedLabel.Text = "Kecepatan Fly: " .. tostring(flySpeed)
+	SpeedLabel.Text = "Fly Speed: " .. flySpeed
 end)
 
 local function stopFly()
@@ -433,9 +491,6 @@ local function stopFly()
 		end
 		if hum then hum.PlatformStand = false end
 	end
-	
-	FlyToggleBtn.Text = "FLY: OFF [E]"
-	FlyToggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
 end
 
 local function startFly()
@@ -447,9 +502,6 @@ local function startFly()
 	if not hrp or not hum then return end
 	
 	flying = true
-	FlyToggleBtn.Text = "FLY: ON [E]"
-	FlyToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
-
 	hum.PlatformStand = true
 
 	flyConnection = RunService.RenderStepped:Connect(function(deltaTime)
@@ -492,105 +544,97 @@ local function toggleFly()
 	if flying then stopFly() else startFly() end
 end
 
-FlyToggleBtn.MouseButton1Click:Connect(toggleFly)
+createToggle(rowFlyToggle, false, function(state)
+	if state then startFly() else stopFly() end
+end)
 
-local ScaleBtn = createStyledBtn(TabSettingsPage, UDim2.new(1, -10, 0, 34), UDim2.new(0, 5, 0, 5), "UI SCALE: 1.0x", Color3.fromRGB(35, 45, 65))
-local TextScaleBtn = createStyledBtn(TabSettingsPage, UDim2.new(1, -10, 0, 34), UDim2.new(0, 5, 0, 45), "UKURAN TEKS: Normal", Color3.fromRGB(35, 45, 65))
-local ResetPosBtn = createStyledBtn(TabSettingsPage, UDim2.new(1, -10, 0, 34), UDim2.new(0, 5, 0, 85), "RESET POSISI UI", Color3.fromRGB(50, 55, 70))
+local rowScale = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 4), "UI Scale")
+local rowText = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 48), "Text Size Mode")
+local rowResetPos = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 92), "Reset Frame Position")
 
 local scales = {0.8, 1.0, 1.1, 1.2}
 local scaleIdx = 2
+
+local ScaleBtn = Instance.new("TextButton")
+ScaleBtn.Size = UDim2.new(0, 80, 0, 22)
+ScaleBtn.Position = UDim2.new(1, -88, 0.5, -11)
+ScaleBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+ScaleBtn.Text = "1.0x"
+ScaleBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+ScaleBtn.TextSize = 10
+ScaleBtn.Font = Enum.Font.GothamBold
+ScaleBtn.Parent = rowScale
+
+local ScaleCorner = Instance.new("UICorner")
+ScaleCorner.CornerRadius = UDim.new(0, 6)
+ScaleCorner.Parent = ScaleBtn
+
 ScaleBtn.MouseButton1Click:Connect(function()
 	scaleIdx = (scaleIdx % #scales) + 1
 	MainUIScale.Scale = scales[scaleIdx]
-	ScaleBtn.Text = "UI SCALE: " .. tostring(scales[scaleIdx]) .. "x"
+	ScaleBtn.Text = tostring(scales[scaleIdx]) .. "x"
 end)
 
-local textSizes = {11, 13, 15}
-local textNames = {"Kecil", "Normal", "Besar"}
+local textSizes = {10, 11, 13}
+local textNames = {"Small", "Normal", "Large"}
 local textIdx = 2
+
+local TextBtn = Instance.new("TextButton")
+TextBtn.Size = UDim2.new(0, 80, 0, 22)
+TextBtn.Position = UDim2.new(1, -88, 0.5, -11)
+TextBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+TextBtn.Text = "Normal"
+TextBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+TextBtn.TextSize = 10
+TextBtn.Font = Enum.Font.GothamBold
+TextBtn.Parent = rowText
+
+local TextCorner = Instance.new("UICorner")
+TextCorner.CornerRadius = UDim.new(0, 6)
+TextCorner.Parent = TextBtn
 
 local function updateTextSizes(size)
 	for _, desc in pairs(MainFrame:GetDescendants()) do
-		if desc:IsA("TextLabel") or desc:IsA("TextButton") then
-			if desc ~= TitleLabel and desc ~= CreditsLabel then
-				desc.TextSize = size
-			end
+		if desc:IsA("TextLabel") and desc ~= TitleLabel and desc ~= CreditsLabel then
+			desc.TextSize = size
 		end
 	end
 end
 
-TextScaleBtn.MouseButton1Click:Connect(function()
+TextBtn.MouseButton1Click:Connect(function()
 	textIdx = (textIdx % #textSizes) + 1
 	updateTextSizes(textSizes[textIdx])
-	TextScaleBtn.Text = "UKURAN TEKS: " .. textNames[textIdx]
+	TextBtn.Text = textNames[textIdx]
 end)
+
+local ResetPosBtn = Instance.new("TextButton")
+ResetPosBtn.Size = UDim2.new(0, 80, 0, 22)
+ResetPosBtn.Position = UDim2.new(1, -88, 0.5, -11)
+ResetPosBtn.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+ResetPosBtn.Text = "Reset"
+ResetPosBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ResetPosBtn.TextSize = 10
+ResetPosBtn.Font = Enum.Font.GothamBold
+ResetPosBtn.Parent = rowResetPos
+
+local ResetCorner = Instance.new("UICorner")
+ResetCorner.CornerRadius = UDim.new(0, 6)
+ResetCorner.Parent = ResetPosBtn
 
 ResetPosBtn.MouseButton1Click:Connect(function()
-	MainFrame.Position = UDim2.new(0.5, -180, 0.25, -190)
+	MainFrame.Position = UDim2.new(0.5, -190, 0.25, -195)
 end)
 
-local isHidePlayers = false
-local hidePlayersConn = nil
-HidePlayersBtn.MouseButton1Click:Connect(function()
-	isHidePlayers = not isHidePlayers
-	if isHidePlayers then
-		HidePlayersBtn.Text = "HIDE PLAYERS: ON"
-		HidePlayersBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
-		for _, plr in pairs(Players:GetPlayers()) do
-			if plr ~= LocalPlayer and plr.Character then plr.Character.Parent = nil end
-		end
-		hidePlayersConn = RunService.RenderStepped:Connect(function()
-			for _, plr in pairs(Players:GetPlayers()) do
-				if plr ~= LocalPlayer and plr.Character and plr.Character.Parent == Workspace then
-					plr.Character.Parent = nil
-				end
-			end
-		end)
-	else
-		HidePlayersBtn.Text = "HIDE PLAYERS: OFF"
-		HidePlayersBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
-		if hidePlayersConn then hidePlayersConn:Disconnect() hidePlayersConn = nil end
-		for _, plr in pairs(Players:GetPlayers()) do
-			if plr ~= LocalPlayer and plr.Character then plr.Character.Parent = Workspace end
+createToggle(rowVfx, false, function(state)
+	for _, obj in pairs(Workspace:GetDescendants()) do
+		if obj:IsA("ParticleEmitter") or obj:IsA("Sparkles") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Trail") or obj:IsA("Beam") then
+			obj.Enabled = not state
 		end
 	end
 end)
 
-local function toggleBlackScreen()
-	BlackScreenGui.Enabled = not BlackScreenGui.Enabled
-	RunService:Set3DRenderSteppedEnabled(not BlackScreenGui.Enabled)
-end
-BlackBtn.MouseButton1Click:Connect(toggleBlackScreen)
-
-local isVfxDisabled = false
-VfxBtn.MouseButton1Click:Connect(function()
-	isVfxDisabled = not isVfxDisabled
-	if isVfxDisabled then
-		VfxBtn.Text = "VFX / EFEK: MATI (NO LAG)"
-		VfxBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
-		for _, obj in pairs(Workspace:GetDescendants()) do
-			if obj:IsA("ParticleEmitter") or obj:IsA("Sparkles") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Trail") or obj:IsA("Beam") then
-				obj.Enabled = false
-			end
-		end
-	else
-		VfxBtn.Text = "VFX / EFEK: ON (NORMAL)"
-		VfxBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
-		for _, obj in pairs(Workspace:GetDescendants()) do
-			if obj:IsA("ParticleEmitter") or obj:IsA("Sparkles") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Trail") or obj:IsA("Beam") then
-				obj.Enabled = true
-			end
-		end
-	end
-end)
-
-local isFpsBoosted = false
-FpsBtn.MouseButton1Click:Connect(function()
-	if not isFpsBoosted then
-		isFpsBoosted = true
-		FpsBtn.Text = "FPS BOOST: AKTIF!"
-		FpsBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
+createToggle(rowFps, false, function(state)
+	if state then
 		Lighting.GlobalShadows = false
 		Lighting.FogEnd = 9e9
 		for _, v in pairs(Lighting:GetChildren()) do
@@ -612,6 +656,36 @@ FpsBtn.MouseButton1Click:Connect(function()
 			end
 		end
 	end
+end)
+
+local hidePlayersConn = nil
+createToggle(rowHide, false, function(state)
+	if state then
+		for _, plr in pairs(Players:GetPlayers()) do
+			if plr ~= LocalPlayer and plr.Character then plr.Character.Parent = nil end
+		end
+		hidePlayersConn = RunService.RenderStepped:Connect(function()
+			for _, plr in pairs(Players:GetPlayers()) do
+				if plr ~= LocalPlayer and plr.Character and plr.Character.Parent == Workspace then
+					plr.Character.Parent = nil
+				end
+			end
+		end)
+	else
+		if hidePlayersConn then hidePlayersConn:Disconnect() hidePlayersConn = nil end
+		for _, plr in pairs(Players:GetPlayers()) do
+			if plr ~= LocalPlayer and plr.Character then plr.Character.Parent = Workspace end
+		end
+	end
+end)
+
+local function toggleBlackScreen()
+	BlackScreenGui.Enabled = not BlackScreenGui.Enabled
+	RunService:Set3DRenderSteppedEnabled(not BlackScreenGui.Enabled)
+end
+
+createToggle(rowBlack, false, function(state)
+	toggleBlackScreen()
 end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
