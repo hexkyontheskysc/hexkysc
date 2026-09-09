@@ -70,11 +70,13 @@ MainUIScale.Parent = ScreenGui
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 380, 0, 390)
-MainFrame.Position = UDim2.new(0.5, -190, 0.25, -195)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(11, 13, 19)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
 local MainCorner = Instance.new("UICorner")
@@ -119,28 +121,28 @@ TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.Parent = HeaderFrame
 
-local ExpandBtn = Instance.new("TextButton")
-ExpandBtn.Size = UDim2.new(0, 24, 0, 24)
-ExpandBtn.Position = UDim2.new(1, -62, 0, 9)
-ExpandBtn.BackgroundColor3 = Color3.fromRGB(20, 26, 38)
-ExpandBtn.Text = "⤢"
-ExpandBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
-ExpandBtn.TextSize = 14
-ExpandBtn.Font = Enum.Font.GothamBold
-ExpandBtn.AutoButtonColor = false
-ExpandBtn.Parent = HeaderFrame
+local MinimizeBtn = Instance.new("TextButton")
+MinimizeBtn.Size = UDim2.new(0, 24, 0, 24)
+MinimizeBtn.Position = UDim2.new(1, -62, 0, 9)
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(20, 26, 38)
+MinimizeBtn.Text = "—"
+MinimizeBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+MinimizeBtn.TextSize = 12
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.AutoButtonColor = false
+MinimizeBtn.Parent = HeaderFrame
 
-local ExpandCorner = Instance.new("UICorner")
-ExpandCorner.CornerRadius = UDim.new(1, 0)
-ExpandCorner.Parent = ExpandBtn
+local MinimizeCorner = Instance.new("UICorner")
+MinimizeCorner.CornerRadius = UDim.new(1, 0)
+MinimizeCorner.Parent = MinimizeBtn
 
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 24, 0, 24)
 CloseBtn.Position = UDim2.new(1, -32, 0, 9)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(25, 20, 28)
-CloseBtn.Text = "✕"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(28, 20, 25)
+CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 70, 80)
-CloseBtn.TextSize = 12
+CloseBtn.TextSize = 11
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.AutoButtonColor = false
 CloseBtn.Parent = HeaderFrame
@@ -148,6 +150,18 @@ CloseBtn.Parent = HeaderFrame
 local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(1, 0)
 CloseCorner.Parent = CloseBtn
+
+local function addHoverAnimation(btn, normalColor, hoverColor)
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = hoverColor}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = normalColor}):Play()
+	end)
+end
+
+addHoverAnimation(MinimizeBtn, Color3.fromRGB(20, 26, 38), Color3.fromRGB(0, 140, 220))
+addHoverAnimation(CloseBtn, Color3.fromRGB(28, 20, 25), Color3.fromRGB(200, 40, 50))
 
 local TabBar = Instance.new("Frame")
 TabBar.Size = UDim2.new(1, -28, 0, 32)
@@ -272,15 +286,12 @@ end
 
 local function switchTab(selectedBtn, selectedPage)
 	for _, btn in pairs({TabAntiAfkBtn, TabFlyBtn, TabSettingsBtn}) do
-		btn.BackgroundTransparency = 1
-		btn.TextColor3 = Color3.fromRGB(140, 150, 170)
+		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(140, 150, 170)}):Play()
 	end
 	for _, page in pairs({TabAntiAfkPage, TabFlyPage, TabSettingsPage}) do
 		page.Visible = false
 	end
-	selectedBtn.BackgroundTransparency = 0
-	selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 230)
-	selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TweenService:Create(selectedBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0, BackgroundColor3 = Color3.fromRGB(0, 140, 230), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
 	selectedPage.Visible = true
 end
 
@@ -288,23 +299,17 @@ TabAntiAfkBtn.MouseButton1Click:Connect(function() switchTab(TabAntiAfkBtn, TabA
 TabFlyBtn.MouseButton1Click:Connect(function() switchTab(TabFlyBtn, TabFlyPage) end)
 TabSettingsBtn.MouseButton1Click:Connect(function() switchTab(TabSettingsBtn, TabSettingsPage) end)
 
-local isExpanded = false
-ExpandBtn.MouseButton1Click:Connect(function()
-	isExpanded = not isExpanded
-	if isExpanded then
-		MainFrame.Size = UDim2.new(0, 480, 0, 440)
-		Container.Size = UDim2.new(1, -28, 0, 310)
-		ExpandBtn.Text = "↙"
-	else
-		MainFrame.Size = UDim2.new(0, 380, 0, 390)
-		Container.Size = UDim2.new(1, -28, 0, 260)
-		ExpandBtn.Text = "⤢"
-	end
+local isMinimized = false
+MinimizeBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	local targetSize = isMinimized and UDim2.new(0, 380, 0, 42) or UDim2.new(0, 380, 0, 390)
+	MinimizeBtn.Text = isMinimized and "□" or "—"
+	
+	TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDir.Out), {Size = targetSize}):Play()
 end)
 
 CloseBtn.MouseButton1Click:Connect(function()
-	ScreenGui:Destroy()
-	BlackScreenGui:Destroy()
+	MainFrame.Visible = false
 end)
 
 local function createToggle(row, defaultState, callback)
@@ -333,8 +338,12 @@ local function createToggle(row, defaultState, callback)
 	local state = defaultState
 	btn.MouseButton1Click:Connect(function()
 		state = not state
-		btn.BackgroundColor3 = state and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
-		dot.Position = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
+		local targetColor = state and Color3.fromRGB(0, 180, 120) or Color3.fromRGB(35, 42, 58)
+		local targetPos = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
+		
+		TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {BackgroundColor3 = targetColor}):Play()
+		TweenService:Create(dot, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDir.Out), {Position = targetPos}):Play()
+		
 		callback(state)
 	end)
 end
@@ -418,11 +427,13 @@ createToggle(rowAfk, false, function(state)
 end)
 
 local flying = false
+local flyKeybindEnabled = false
 local flySpeed = 50
 local flyConnection = nil
 
-local rowFlyToggle = createRow(TabFlyPage, UDim2.new(0, 3, 0, 4), "Fly Hack [E]")
-local rowFlySpeed = createRow(TabFlyPage, UDim2.new(0, 3, 0, 48), "Fly Speed: " .. flySpeed)
+local rowFlyToggle = createRow(TabFlyPage, UDim2.new(0, 3, 0, 4), "Fly Hack")
+local rowKeybindToggle = createRow(TabFlyPage, UDim2.new(0, 3, 0, 48), "Enable Keybind [E]")
+local rowFlySpeed = createRow(TabFlyPage, UDim2.new(0, 3, 0, 92), "Fly Speed: " .. flySpeed)
 
 local SpeedLabel = rowFlySpeed:FindFirstChildOfClass("TextLabel")
 
@@ -548,6 +559,10 @@ createToggle(rowFlyToggle, false, function(state)
 	if state then startFly() else stopFly() end
 end)
 
+createToggle(rowKeybindToggle, false, function(state)
+	flyKeybindEnabled = state
+end)
+
 local rowScale = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 4), "UI Scale")
 local rowText = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 48), "Text Size Mode")
 local rowResetPos = createRow(TabSettingsPage, UDim2.new(0, 3, 0, 92), "Reset Frame Position")
@@ -622,7 +637,7 @@ ResetCorner.CornerRadius = UDim.new(0, 6)
 ResetCorner.Parent = ResetPosBtn
 
 ResetPosBtn.MouseButton1Click:Connect(function()
-	MainFrame.Position = UDim2.new(0.5, -190, 0.25, -195)
+	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 end)
 
 createToggle(rowVfx, false, function(state)
@@ -695,6 +710,8 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	elseif input.KeyCode == Enum.KeyCode.B then
 		toggleBlackScreen()
 	elseif input.KeyCode == Enum.KeyCode.E then
-		toggleFly()
+		if flyKeybindEnabled then
+			toggleFly()
+		end
 	end
 end)
